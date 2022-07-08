@@ -1,0 +1,18 @@
+<taurusgui_config>
+  <GUI_NAME>test</GUI_NAME>
+  <ORGANIZATION>TAURUS</ORGANIZATION>
+  <CUSTOM_LOGO/>
+  <PanelDescriptions>
+    <PanelDescription>
+  <name>trend1</name>
+  <classname>TaurusTrend</classname>
+  <modulename/>
+  <widgetname/>
+  <floating>True</floating>
+  <sharedDataWrite/>
+  <sharedDataRead/>
+  <model>tango/test/1/double_scalar</model>
+</PanelDescription>
+  </PanelDescriptions>
+  <MONITOR>tango/test/1/double_scalar</MONITOR>
+</taurusgui_config>

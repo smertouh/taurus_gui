@@ -1,0 +1,9 @@
+Project created by AppSettingsWizard on 2022-07-07T16:35:23.566424
+XML Config file created: "D:/Users/BINP/PycharmProjects/taurus_gui/newgui\tgconf_test\config.xml"
+Python config file created: "D:/Users/BINP/PycharmProjects/taurus_gui/newgui\tgconf_test\config.py"
+python init file created: "D:/Users/BINP/PycharmProjects/taurus_gui/newgui\tgconf_test\__init__.py"
+Application project was successfully created.You can find the files in: "D:/Users/BINP/PycharmProjects/taurus_gui/newgui"
+Tip: You can install it with:
+	pip install D:/Users/BINP/PycharmProjects/taurus_gui/newgui
+Tip: And then run the application with:
+	 test
