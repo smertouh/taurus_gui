@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
 
     w = pg.PlotWidget()
-    w.setWindowTitle('window_name')
+    w.setWindowTitle('vacuum trend')
     axis.attachToPlotItem(w.getPlotItem())
     as1=w.getPlotItem()
     #axis.setAxisScale(self.xBottom, 0, 5 * 60)
@@ -72,14 +72,15 @@ if __name__ == "__main__":
     w.addLegend()
 
     # adding a taurus data item...
-    c2 = TaurusTrendSet(name="foo")
+    c2 = TaurusTrendSet(name="temperature")
     c2.setModel("eval:{tango/test/1/double_scalar}")
     c2.setBufferSize(1000)
     #w.setTitleText("asfasfas")
     w.addItem(c2)
 
-    c3 = TaurusTrendSet(name="foo3")
-    c3.setModel("eval:{tango/test/1/double_scalar}*2")
+    c3 = TaurusTrendSet(name="vacuum")
+    #c3.setModel("eval: a=10;b={tango/test/1/double_scalar};(a*b)")
+    c3.setModel("eval:a=10;b={tango/test/1/double_scalar}*1.667-11.46;a**((b+250)/500)")
     w.addItem(c3)
 
     #ticks = [list(zip((0, 1, 2, 3, 4), (0,1,2,3,4)))]
