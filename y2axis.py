@@ -43,7 +43,7 @@ if __name__ == "__main__":
     y2.attachToPlotItem(w.getPlotItem())
 
     # add a data item to Y1 (just as you would normally)
-    c1 = pg.PlotDataItem(name="c1", pen="c")
+    c1 = pg.PlotDataItem(name="c1", pen="r")
     c1.setData(y=numpy.linspace(0, 20, 250))
     w.addItem(c1)
 

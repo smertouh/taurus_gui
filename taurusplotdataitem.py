@@ -33,10 +33,12 @@ if __name__ == "__main__":
     import pyqtgraph as pg
 
     app = TaurusApplication()
-
+    pg.setConfigOption('background', 'w')
+    pg.setConfigOption('foreground', 'k')
     # a standard pyqtgraph plot_item
     w = pg.PlotWidget()
-
+    pg.setConfigOption('background', 'w')
+    pg.setConfigOption('foreground', 'k')
     # add legend to the plot, for that we have to give a name to plot items
     w.addLegend()
 

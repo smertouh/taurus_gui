@@ -21,7 +21,7 @@ FREQ = 5 # Hz
 QUEUE_SIZE = 10
 #b=taurus.Attribute("ET7000_server/test/pet10_7026/ao01")
 
-bot1=telegram.Bot(token="1057965441:AAFUonNieS6Uwt-Es_XMwxVnQAO-EsSB2ag")
+
 
         
     
