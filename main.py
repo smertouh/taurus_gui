@@ -29,9 +29,10 @@ on a pure pyqtgraph plot"""
 
 
 def cycle2():
-    global dT
+    global dT,prev
     T={0:10, 1:15, 2:30,3:60,4:300,5:900,6:1800,7:3600, 8:28800}
     dT=T[Window.slider2.value()]
+    prev+=1
     cycle()
     print (dT)
 
@@ -151,8 +152,8 @@ if __name__ == "__main__":
     autopan.attachToPlotItem(w.getPlotItem())
 
     # Add Forced-read tool
-    #fr = ForcedReadTool(w, period=7600)
-    #fr.attachToPlotItem(w.getPlotItem())
+    fr = ForcedReadTool(w, period=1000)
+    fr.attachToPlotItem(w.getPlotItem())
 
     # add legend the legend tool
     penleg=pg.mkPen(width=2,color='w')
@@ -163,7 +164,7 @@ if __name__ == "__main__":
     pen2 = pg.mkPen(width=4, color='r')
     c2 = TaurusTrendSet(name="temperature", pen=pen2)
     c2.setModel("eval:{tango/test/1/double_scalar}")
-    c2.setBufferSize(1000)
+    #c2.setBufferSize(1000)
     #w.setTitleText("asfasfas")
     w.addItem(c2)
     pen3=pg.mkPen(width=2, color='y') #style=QtCore.Qt.DashLine,
