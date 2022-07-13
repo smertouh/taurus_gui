@@ -14,18 +14,27 @@ from taurus.core.taurusmanager import TaurusManager
 from PyQt5.QtWidgets import *
 import json
 from tango import AttributeProxy
-
-with open("data_file.json", "r") as read_file:
-    MainDict = json.load(read_file)
+from PyQt5.QtCore import QSize, QPoint
 
 
+
+def prepare_settings(obj, widgets=()):
+    p = obj.pos()
+    s = obj.size()
+
+
+    return [p,s]
 
 
 class TimeGraphWithSlider(QMainWindow):
-    def __init__(self,MainDict=MainDict):
+    def __init__(self,MainDict):
+        self.MainDict=MainDict
         print(1)
         super(TimeGraphWithSlider,self).__init__()
         # init
+
+
+
         self.now0 = time.time()
         self.prev = 0
         self.T0 = 0
@@ -39,6 +48,9 @@ class TimeGraphWithSlider(QMainWindow):
 
         self.setWindowTitle(MainDict["window_name"])  # Название
         self.setGeometry(0, 690, 920, 350)
+        self.resize(QSize(MainDict["position"][1][0], MainDict["position"][1][1]))
+        self.move(QPoint(MainDict["position"][0][0], MainDict["position"][0][1]))
+
 
         # slider1
         self.slider = QSlider(QtCore.Qt.Horizontal, self)
@@ -115,6 +127,20 @@ class TimeGraphWithSlider(QMainWindow):
 
         w.showGrid(True, True)
 
+    def closeEvent(self, event):
+
+        super(TimeGraphWithSlider, self).closeEvent(event)
+        self.timer.stop()
+        a=(prepare_settings(self))
+        b=[[a[0].x(), a[0].y()], [a[1].width(),a[1].height()]]
+        self.MainDict.update({"position":b})
+        s=MainDict["window_name"]+".json"
+        with open(s, "w") as write_file:
+            json.dump(MainDict, write_file, indent=4)
+        # Выход из программы
+        #app = QApplication.instance()
+        #app.quit()
+
     def cycle2(self):
 
         T = {0: 10, 1: 15, 2: 30, 3: 60, 4: 300, 5: 900, 6: 1800, 7: 3600, 8: 28800}
@@ -188,7 +214,8 @@ class TimeGraphWithSlider(QMainWindow):
 
 if __name__ == "__main__":
     print(1)
-
+    with open("data_file.json", "r") as read_file:
+        MainDict = json.load(read_file)
     app = TaurusApplication()
 
 

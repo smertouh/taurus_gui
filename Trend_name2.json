@@ -1,0 +1,39 @@
+{
+    "window_name": "Trend_name2",
+    "ForcedReadTool": 1000,
+    "Y_axis": [
+        -250,
+        250,
+        "linear"
+    ],
+    "Models": [
+        {
+            "model": "eval:a=10;b={tango/test/1/double_scalar}.magnitude*1.667-11.46;a**((b+250)/500)",
+            "name": "vac",
+            "color": "y",
+            "width": 2
+        },
+        {
+            "model": "eval:a={tango/test/1/double_scalar}.magnitude;a",
+            "name": "temperature",
+            "color": "r",
+            "width": 4
+        },
+        {
+            "model": "eval:a={tango/test/1/double_scalar}.magnitude;a/2",
+            "name": "pres",
+            "color": "c",
+            "width": 4
+        }
+    ],
+    "position": [
+        [
+            279,
+            707
+        ],
+        [
+            920,
+            350
+        ]
+    ]
+}
