@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import *
 import json
 from tango import AttributeProxy
 from PyQt5.QtCore import QSize, QPoint
+import glob, os
 
 
 
@@ -30,6 +31,7 @@ class TimeGraphWithSlider(QMainWindow):
     def __init__(self,MainDict):
         self.MainDict=MainDict
         print(1)
+
         super(TimeGraphWithSlider,self).__init__()
         # init
 
@@ -67,8 +69,12 @@ class TimeGraphWithSlider(QMainWindow):
         self.slider2.move(900, 10)
         self.slider2.setMinimum(0)
         self.slider2.setMaximum(8)
-        self.slider2.setValue(3)
+        try:
+            self.slider2.setValue(self.MainDict["slider2value"])
+        except:
+            self.slider2.setValue(3)
         self.slider2.valueChanged.connect(self.cycle2)
+
 
         # Ось Х
         self.axis = DateAxisItem(orientation="bottom")
@@ -126,7 +132,26 @@ class TimeGraphWithSlider(QMainWindow):
         w.setLogMode(False, MainDict["Y_axis"][2] == "log")
 
         w.showGrid(True, True)
+        self.slider.hide()
+        self.cycle2()
+        #self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+        #self.setWindowFlags(QtCore.Qt.WindowStaysOnBottomHint)
+        #self.setWindowFlags(QtCore.Qt.MSWindowsFixedSizeDialogHint|QtCore.Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(QtCore.Qt.MSWindowsFixedSizeDialogHint)
 
+        # checkbox
+        self.CB = QCheckBox(self)
+        self.CB.setText("on top")
+        self.CB.setChecked(False)
+        self.CB.stateChanged.connect(self.CBcheck)
+        self.CB.move(0, 325)
+    def CBcheck(self):
+        if self.CB.isChecked():
+            self.setWindowFlags(QtCore.Qt.MSWindowsFixedSizeDialogHint|QtCore.Qt.WindowStaysOnTopHint)
+            self.show()
+        else:
+            self.setWindowFlags(QtCore.Qt.MSWindowsFixedSizeDialogHint)
+            self.show()
     def closeEvent(self, event):
 
         super(TimeGraphWithSlider, self).closeEvent(event)
@@ -134,9 +159,10 @@ class TimeGraphWithSlider(QMainWindow):
         a=(prepare_settings(self))
         b=[[a[0].x(), a[0].y()], [a[1].width(),a[1].height()]]
         self.MainDict.update({"position":b})
-        s=MainDict["window_name"]+".json"
+        self.MainDict.update({"slider2value":self.slider2.value()})
+        s=self.MainDict["window_name"]+".json"
         with open(s, "w") as write_file:
-            json.dump(MainDict, write_file, indent=4)
+            json.dump(self.MainDict, write_file, indent=4)
         # Выход из программы
         #app = QApplication.instance()
         #app.quit()
@@ -214,13 +240,28 @@ class TimeGraphWithSlider(QMainWindow):
 
 if __name__ == "__main__":
     print(1)
-    with open("data_file.json", "r") as read_file:
-        MainDict = json.load(read_file)
+    windows=[]
     app = TaurusApplication()
+    for file in glob.glob("Trend*.json", recursive=True):
+
+        with open(file, "r") as read_file:
+            MainDict1 = json.load(read_file)
+            windows.append(TimeGraphWithSlider(MainDict1))
+        for window in windows:
+            window.show()
+        #windows[0].setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+
+    """
+    with open("Trend_name.json", "r") as read_file:
+        MainDict1 = json.load(read_file)
+    with open("Trend_name2.json", "r") as read_file:
+        MainDict2 = json.load(read_file)
+    
 
 
-    window1=TimeGraphWithSlider(MainDict)
-    window2 = TimeGraphWithSlider(MainDict)
+    window1=TimeGraphWithSlider(MainDict1)
+    window2 = TimeGraphWithSlider(MainDict2)
     window1.show()
     window2.show()
+    """
     sys.exit(app.exec_())
