@@ -29,17 +29,44 @@ on a pure pyqtgraph plot"""
 
 
 def cycle2():
-    global dT,prev
+    global dT,prev,timer
     T={0:10, 1:15, 2:30,3:60,4:300,5:900,6:1800,7:3600, 8:28800}
     dT=T[Window.slider2.value()]
     prev+=1
+    timer.setInterval(dT / 6 * 1000)
     cycle()
     print (dT)
 
+
+def sl_move():
+    global dT, timer, w
+    now = time.time()
+    if Window.slider.value() != Window.slider.maximum():
+        Window.slider.setStyleSheet("background-color:red")
+        global prev, T0
+        if True:
+
+            T0 = (now - now0) / 10000 * Window.slider.value() + now0
+
+            if T0 - dT < now0:
+                w.setRange(xRange=(now0, now0 + 7 * dT / 6))
+            else:
+                w.setRange(xRange=(T0 - dT, T0 + dT / 6))
+    else:
+        Window.slider.setStyleSheet("background-color:white")
+        if now - dT < now0:
+            w.setRange(xRange=(now0, now0 + 7 * dT / 6))
+            # Window.slider.setEnabled(False)
+            Window.slider.hide()
+        else:
+            w.setRange(xRange=(now - dT, now + dT / 6))
+            # Window.slider.setEnabled(True)
+            Window.slider.show()
 def cycle():
     try:
         now = time.time()
-        global dT
+        global dT, timer
+        timer.setInterval(dT/6*1000)
         # ticks = [list(zip(timestamps, timestampsstr))]
         # ticks = [0,1,2,3]
         # xax = w.getAxis("bottom")
@@ -47,6 +74,10 @@ def cycle():
         global w
         # print(Window.slider.value()," ",Window.slider.maximum() )
         # Предупреждение, если слайдер сдвига графика не в конце то делаем его красным
+
+        if w.getAxis('bottom').range[1] > now:
+            Window.slider.setValue(Window.slider.maximum())
+
         if Window.slider.value() != Window.slider.maximum():
             Window.slider.setStyleSheet("background-color:red")
             global prev, T0
@@ -54,24 +85,46 @@ def cycle():
                 prev = Window.slider.value()
 
                 T0 = (now - now0) / 10000 * Window.slider.value() + now0
-                print(T0)
-                timestamps = numpy.linspace(T0, T0 + 10, 5)
-                timestampsstr = []
-                for timestamp in timestamps:
-                    timestampsstr.append(time.strftime('%H:%M:%S', time.gmtime(timestamp)))
-                    print(timestampsstr.append(time.strftime('%H:%M:%S', time.gmtime(timestamp))))
-                w.setRange(xRange=(T0 - dT, T0 + dT/6))
+
+                if T0-dT<now0:
+                    w.setRange(xRange=(now0, now0 + 7 * dT / 6))
+                else:
+                    w.setRange(xRange=(T0 - dT, T0 + dT / 6))
+
+            """
+            sl_val=max(10000 * (w.getAxis('bottom').range[0] - now0) / (now - now0),10000*dT/(now-now0))
+            if sl_val==0:
+                sleep(1)
+                now = time.time()
+                sl_val = max(10000 * (w.getAxis('bottom').range[0] - now0) / (now - now0), 0)
+            if w.getAxis('bottom').range[1]>now0+7 * dT / 6:
+                Window.slider.setValue(sl_val)
+            print(sl_val)
+            """
 
 
 
         else:
             Window.slider.setStyleSheet("background-color:white")
-            timestamps = numpy.linspace(now, now + 10, 5)
-            timestampsstr = []
-            for timestamp in timestamps:
-                timestampsstr.append(time.strftime('%H:%M:%S', time.gmtime(timestamp)))
 
-            w.setRange(xRange=(now - dT, now + dT/6))
+            if w.getAxis('bottom').range[1] <now:
+                Window.slider.setValue(10000*(w.getAxis('bottom').range[0]-now0)/(now-now0))
+                print((10000*(w.getAxis('bottom').range[0]-now0)/(now-now0)))
+                #w.setRange(xRange=(w.getAxis('bottom').range[0], w.getAxis('bottom').range[1]))
+
+
+            else:
+
+                if now - dT < now0:
+                    w.setRange(xRange=(now0, now0 + 7 * dT / 6))
+                    # Window.slider.setEnabled(False)
+                    Window.slider.hide()
+                else:
+                    w.setRange(xRange=(now - dT, now + dT / 6))
+                    # Window.slider.setEnabled(True)
+                    Window.slider.show()
+
+
     except:
         pass
 
@@ -114,7 +167,7 @@ if __name__ == "__main__":
     Window.slider.setMinimum(0)
     Window.slider.setMaximum(10000)
     Window.slider.setValue(10000)
-    Window.slider.valueChanged.connect(cycle)
+    Window.slider.valueChanged.connect(sl_move)
 
     #slider2
     Window.slider2 = QSlider(QtCore.Qt.Vertical, Window)
