@@ -1,5 +1,5 @@
 {
-    "window_name": "Trend_name2",
+    "window_name": "Trend_name3",
     "ForcedReadTool": 1000,
     "Y_axis": [
         -250,
@@ -14,13 +14,13 @@
             "width": 2
         },
         {
-            "model": "eval:a={tango/test/1/double_scalar}.magnitude;a",
+            "model": "eval:a={tango/test/1/double_scalar_rww}.magnitude;a",
             "name": "temperature",
             "color": "r",
             "width": 4
         },
         {
-            "model": "eval:a={tango/test/1/double_scalar}.magnitude;a/2",
+            "model": "eval:a={tango/test/1/double_scalar_w}.magnitude;a/2",
             "name": "pres",
             "color": "c",
             "width": 4
@@ -28,13 +28,13 @@
     ],
     "position": [
         [
-            949,
-            5
+            23,
+            384
         ],
         [
             920,
             350
         ]
     ],
-    "slider2value": 1
+    "slider2value": 2
 }

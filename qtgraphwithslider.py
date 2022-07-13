@@ -16,7 +16,9 @@ import json
 from tango import AttributeProxy
 from PyQt5.QtCore import QSize, QPoint
 import glob, os
-
+import pyqtgraph.exporters
+import socket
+import datetime
 
 
 def prepare_settings(obj, widgets=()):
@@ -30,7 +32,7 @@ def prepare_settings(obj, widgets=()):
 class TimeGraphWithSlider(QMainWindow):
     def __init__(self,MainDict):
         self.MainDict=MainDict
-        print(1)
+        #print(1)
 
         super(TimeGraphWithSlider,self).__init__()
         # init
@@ -95,7 +97,7 @@ class TimeGraphWithSlider(QMainWindow):
 
         # создаём легенду
         penleg = pg.mkPen(width=2, color='w')
-        leg = w.addLegend(labelTextSize='14pt', pen=penleg, brush='w')
+        self.leg = w.addLegend(labelTextSize='14pt', pen=penleg, brush='w')
 
         # adding a taurus data item...
         for model in MainDict["Models"]:
@@ -109,12 +111,20 @@ class TimeGraphWithSlider(QMainWindow):
                             s1 = s.split("{")[1].split("}")[0]
                             att = AttributeProxy(s1)
                             D_U = att.get_property('display_unit')['display_unit']
-                            if str(type(D_U)) == "<class 'tango._tango.StdStringVector'>":
-                                D_U = 1.0
-                            else:
-                                D_U = float(D_U)
+                            s2 = ''
+                            for s3 in str(D_U):
+                                if s3.isdigit():
+                                    s2 += s3
+                                elif s3 == ".":
+                                    s2 += s3
+                            try:
+                                D_U = float(s2)
+                            except:
+                                D_U=1.0
                             print(D_U)
-            c3.setModel(model["model"])
+
+            c3.setModel(model["model"].split(".magnitude")[0]+".magnitude*"+str(D_U)+model["model"].split(".magnitude")[1])
+            #c3.useArchiving()
             w.addItem(c3)
 
         # стандартный таймер - функция cycle будет вызыватся каждую 1 секунд
@@ -163,6 +173,21 @@ class TimeGraphWithSlider(QMainWindow):
         s=self.MainDict["window_name"]+".json"
         with open(s, "w") as write_file:
             json.dump(self.MainDict, write_file, indent=4)
+        now=time.time()
+        self.graph.setRange(xRange=(self.now0, now))
+        self.leg.hide()
+        now = datetime.datetime.now()
+        path="d:\\data\\trend\\"+str(socket.gethostname())+"\\"+now.strftime("%Y")+"\\"+now.strftime("%Y-%m")+"\\"+now.strftime("%Y-%m-%d")+"\\"+self.MainDict["window_name"]+"\\"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        path+=now.strftime("%Y-%m-%d_%H_%M")
+        exporter = pg.exporters.ImageExporter(self.graph.plotItem)
+        exporter.export(path+'.PNG')
+        exporter2 = pg.exporters.CSVExporter(self.graph.plotItem)
+        exporter2.export(path+'.csv')
+        print("OK!")
+
+
         # Выход из программы
         #app = QApplication.instance()
         #app.quit()
@@ -226,7 +251,7 @@ class TimeGraphWithSlider(QMainWindow):
                 self.slider.setStyleSheet("background-color:white")
                 if w.getAxis('bottom').range[1] < now:
                     self.slider.setValue(10000 * (w.getAxis('bottom').range[0] - now0) / (now - now0))
-                    print((10000 * (w.getAxis('bottom').range[0] - now0) / (now - now0)))
+                    #print((10000 * (w.getAxis('bottom').range[0] - now0) / (now - now0)))
                 else:
                     if now - dT < now0:
                         w.setRange(xRange=(now0, now0 + 7 * dT / 6))
@@ -239,7 +264,7 @@ class TimeGraphWithSlider(QMainWindow):
 
 
 if __name__ == "__main__":
-    print(1)
+    #print(1)
     windows=[]
     app = TaurusApplication()
     for file in glob.glob("Trend*.json", recursive=True):
@@ -264,4 +289,6 @@ if __name__ == "__main__":
     window1.show()
     window2.show()
     """
+
+
     sys.exit(app.exec_())

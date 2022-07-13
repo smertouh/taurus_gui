@@ -1,5 +1,5 @@
 {
-    "window_name": "Trend_name2",
+    "window_name": "Trend_name4",
     "ForcedReadTool": 1000,
     "Y_axis": [
         -250,
@@ -28,13 +28,13 @@
     ],
     "position": [
         [
-            949,
-            5
+            953,
+            386
         ],
         [
             920,
             350
         ]
     ],
-    "slider2value": 1
+    "slider2value": 3
 }
