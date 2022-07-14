@@ -21,6 +21,7 @@ import socket
 import datetime
 
 
+
 def prepare_settings(obj, widgets=()):
     p = obj.pos()
     s = obj.size()
@@ -47,7 +48,7 @@ class TimeGraphWithSlider(QMainWindow):
         pg.setConfigOption('foreground', 'k')
         pg.mkPen(0.5)
         taurusM = TaurusManager()
-        taurusM.changeDefaultPollingPeriod(200)  # ms
+        taurusM.changeDefaultPollingPeriod(1000)  # ms
 
 
         self.setWindowTitle(MainDict["window_name"])  # Название
@@ -92,8 +93,8 @@ class TimeGraphWithSlider(QMainWindow):
         autopan = XAutoPanTool()
         autopan.attachToPlotItem(w.getPlotItem())
         # Add Forced-read tool
-        fr = ForcedReadTool(w, period=MainDict["ForcedReadTool"])
-        fr.attachToPlotItem(w.getPlotItem())
+        self.fr = ForcedReadTool(w, period=MainDict["ForcedReadTool"])
+        self.fr.attachToPlotItem(w.getPlotItem())
 
         # создаём легенду
         penleg = pg.mkPen(width=2, color='w')
@@ -155,6 +156,9 @@ class TimeGraphWithSlider(QMainWindow):
         self.CB.setChecked(False)
         self.CB.stateChanged.connect(self.CBcheck)
         self.CB.move(0, 325)
+
+        w.setRange(yRange=(MainDict["Y_axis"][0], MainDict["Y_axis"][
+            1]))  # xRange=(0, 3600),
     def CBcheck(self):
         if self.CB.isChecked():
             self.setWindowFlags(QtCore.Qt.MSWindowsFixedSizeDialogHint|QtCore.Qt.WindowStaysOnTopHint)
@@ -185,6 +189,7 @@ class TimeGraphWithSlider(QMainWindow):
         exporter.export(path+'.PNG')
         exporter2 = pg.exporters.CSVExporter(self.graph.plotItem)
         exporter2.export(path+'.csv')
+        self.fr.setPeriod(0)
         print("OK!")
 
 
@@ -197,7 +202,7 @@ class TimeGraphWithSlider(QMainWindow):
         T = {0: 10, 1: 15, 2: 30, 3: 60, 4: 300, 5: 900, 6: 1800, 7: 3600, 8: 28800}
         self.dT = T[self.slider2.value()]
         self.prev += 1
-        self.timer.setInterval(self.dT / 6 * 1000)
+        self.timer.setInterval(int(self.dT / 6 * 1000))
         self.cycle()
 
     def sl_move(self):

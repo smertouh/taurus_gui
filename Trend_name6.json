@@ -2,8 +2,8 @@
     "window_name": "Trend_name6",
     "ForcedReadTool": 1000,
     "Y_axis": [
-        -250,
-        250,
+        -900,
+        900,
         "linear"
     ],
     "Models": [
@@ -36,5 +36,5 @@
             350
         ]
     ],
-    "slider2value": 5
+    "slider2value": 7
 }
