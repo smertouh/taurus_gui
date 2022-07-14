@@ -2,8 +2,8 @@
     "window_name": "Trend_name6",
     "ForcedReadTool": 1000,
     "Y_axis": [
-        -900,
-        900,
+        -833.3333333333334,
+        833.3333333333334,
         "linear"
     ],
     "Models": [

@@ -2,8 +2,8 @@
     "window_name": "Trend_name5",
     "ForcedReadTool": 1000,
     "Y_axis": [
-        -250,
-        250,
+        -19843272.295843445,
+        38392912.848362,
         "linear"
     ],
     "Models": [
@@ -14,7 +14,7 @@
             "width": 2
         },
         {
-            "model": "eval:a={tango/test/1/double_scalar}.magnitude;a",
+            "model": "eval:a={tango/test/1/double_scalar}.magnitude*{tango/test/1/double_scalar_rww}.magnitude;a/2*{tango/test/1/double_scalar_rww}.magnitude",
             "name": "temperature",
             "color": "r",
             "width": 4
@@ -28,13 +28,13 @@
     ],
     "position": [
         [
-            13,
-            775
+            24,
+            769
         ],
         [
             920,
             350
         ]
     ],
-    "slider2value": 6
+    "slider2value": 4
 }

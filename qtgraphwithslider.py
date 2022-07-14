@@ -105,10 +105,15 @@ class TimeGraphWithSlider(QMainWindow):
             pen3 = pg.mkPen(width=float(model["width"]),
                             color=model["color"])  # style=QtCore.Qt.DashLine,
             c3 = TaurusTrendSet(name=model["name"], pen=pen3)  # symbolBrush=0.5,
+            """
+            snew=""
             for s in model["model"].split(";"):
+                if not snew=="":
+                    snew+=";"
                 if s.count("{") == 1:
                     if ".magnitude" in s:
-                        if "=" in s:
+                        #считаем display unit
+                        if True:#if "=" in s:
                             s1 = s.split("{")[1].split("}")[0]
                             att = AttributeProxy(s1)
                             D_U = att.get_property('display_unit')['display_unit']
@@ -123,8 +128,39 @@ class TimeGraphWithSlider(QMainWindow):
                             except:
                                 D_U=1.0
                             print(D_U)
-
-            c3.setModel(model["model"].split(".magnitude")[0]+".magnitude*"+str(D_U)+model["model"].split(".magnitude")[1])
+                        s=s.split(".magnitude")[0]+".magnitude*"+str(D_U)+s.split(".magnitude")[1]
+                snew+=s
+            """
+            #new
+            snew=""
+            string2edit=model["model"]
+            if "{"in string2edit:
+                while len(string2edit) > 0:  # ".magnitude" in string2edit:
+                    snew += string2edit.split("{", 1)[0]
+                    snew += "({"
+                    s1 = string2edit.split("{", 1)[1].split("}", 1)[0]
+                    att = AttributeProxy(s1)
+                    D_U = att.get_property('display_unit')['display_unit']
+                    s2 = ''
+                    for s3 in str(D_U):
+                        if s3.isdigit():
+                            s2 += s3
+                        elif s3 == ".":
+                            s2 += s3
+                    try:
+                        D_U = float(s2)
+                    except:
+                        D_U = 1.0
+                    snew += s1 + "}.magnitude*" + str(D_U)+")"
+                    if len(string2edit.split(".magnitude")) > 2:
+                        string2edit = string2edit.split(".magnitude", 1)[1]
+                    elif len(string2edit.split(".magnitude")) == 2:
+                        snew += string2edit.split(".magnitude")[1]
+                        string2edit = ""
+            else:
+                snew=string2edit
+            print(self.MainDict["window_name"],"  model  ", snew)
+            c3.setModel(snew)#model["model"].split(".magnitude")[0]+".magnitude*"+str(D_U)+model["model"].split(".magnitude")[1])
             #c3.useArchiving()
             w.addItem(c3)
 
@@ -161,7 +197,7 @@ class TimeGraphWithSlider(QMainWindow):
             1]))  # xRange=(0, 3600),
     def CBcheck(self):
         if self.CB.isChecked():
-            self.setWindowFlags(QtCore.Qt.MSWindowsFixedSizeDialogHint|QtCore.Qt.WindowStaysOnTopHint)
+            self.setWindowFlags(QtCore.Qt.MSWindowsFixedSizeDialogHint|QtCore.Qt.WindowStaysOnTopHint)#|QtCore.Qt.FramelessWindowHint)
             self.show()
         else:
             self.setWindowFlags(QtCore.Qt.MSWindowsFixedSizeDialogHint)
@@ -172,8 +208,17 @@ class TimeGraphWithSlider(QMainWindow):
         self.timer.stop()
         a=(prepare_settings(self))
         b=[[a[0].x(), a[0].y()], [a[1].width(),a[1].height()]]
+        #записываем положение окна
         self.MainDict.update({"position":b})
+        #записываем значение правого слайдера
         self.MainDict.update({"slider2value":self.slider2.value()})
+        #записываем значения У оси
+        Yaxis=self.MainDict["Y_axis"]
+        Yaxis[0]=self.graph.getAxis('left').range[0]/1.2
+        Yaxis[1]=self.graph.getAxis('left').range[1]/1.2
+        self.MainDict.update({"Y_axis": Yaxis})
+        #записываем Forcedreadperiod
+        self.MainDict.update({"ForcedReadTool":self.fr.period()})
         s=self.MainDict["window_name"]+".json"
         with open(s, "w") as write_file:
             json.dump(self.MainDict, write_file, indent=4)

@@ -1,9 +1,9 @@
 {
     "window_name": "Trend_name4",
-    "ForcedReadTool": 1000,
+    "ForcedReadTool": 300,
     "Y_axis": [
-        -250,
-        250,
+        -536.2014271650596,
+        172.58792118009282,
         "linear"
     ],
     "Models": [
